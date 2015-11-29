@@ -22,46 +22,6 @@ $(document).on "page:change", ->
 
 
 
-this.select_kind = (kind) ->
-  $('[name="color"]').empty()
-  if kind is "vegetable"
-    colors = ["","green", "red"]
-  else
-    colors = ["","yellow", "pink", "purple"]
- 
-  for col in colors
-    $('[name="color"]').append($('<option>').val(col).text(col))
- 
-this.select_color = ->
-  $('[name="item"]').empty()
-  col = $('[name="color"]').val()
- 
-  switch col
-    when "green"
-      items = ["Cabbage","Lettuce", "Cucumber"]
-    when "red"
-      items = ["Carrot","Tomatoes"]
-    when "yellow"
-      items = ["Lemon","Banana", "Pineapple"]
-    when "pink"
-      items = ["Peach"]
-    when "purple"
-      items = ["Grape"]
-    else
-      alert 'no selected'
-      return
- 
-  for item in items
-    $('[name="item"]').append($('<option>').val(item).text(item))
- 
-this.buy = ->
-  item = $('[name="item"]').val()
- 
-  unless item is null then alert item + " please!!"
-
-
-          
-
 # スタイル定義
 map_style_options = [
     {
@@ -92,32 +52,11 @@ this.initialize = ->
   }
   window.mymap = new google.maps.Map(document.getElementById("map_canvas"), opts)
 
-  m_latlng1 = new google.maps.LatLng(33.965074,130.952654)
-  marker1 = new google.maps.Marker({
-    position: m_latlng1
-  });
-
-  m_latlng2 = new google.maps.LatLng(33.958739,130.964155);
-  marker2 = new google.maps.Marker({
-    position: m_latlng2
-  });
-
   # スタイル適用
   my_style = new google.maps.StyledMapType(map_style_options)
   window.mymap.mapTypes.set('MyStyle', my_style)
   window.mymap.setMapTypeId('MyStyle')
 
-
-
-
-
-this.doOpen = ->
-  marker1.setMap(window.mymap)
-  marker2.setMap(window.mymap)
-
-this.doClose = ->
-  marker1.setMap(null)
-  marker2.setMap(null)
 
 
 if $('#map_canvas').length
