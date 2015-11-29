@@ -35,5 +35,5 @@ bower.json
 .powenv
 
 # emacs style
-*.~
+*~
 \#*
