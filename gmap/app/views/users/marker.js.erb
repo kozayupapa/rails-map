@@ -1,0 +1,10 @@
+<% @users.each do |user| %>
+   console.log("marker erb");
+   //marker
+   var marker_<%= user.id %> = new google.maps.Marker({
+       position: new google.maps.LatLng(<%= user.latitude %>, <%= user.longitude %>), 
+       draggable: false,
+       animation: google.maps.Animation.DROP
+   });
+   marker_<%= user.id %>.setMap(window.mymap);
+<% end %>
