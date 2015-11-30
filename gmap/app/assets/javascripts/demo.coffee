@@ -55,6 +55,18 @@ this.initialize = ->
   window.mymap.mapTypes.set('MyStyle', my_style)
   window.mymap.setMapTypeId('MyStyle')
 
+
+  # Add a listener for the click event
+  if $('#enable_edit_path')[0]
+    window.mymap.addListener('click', addLatLng)
+    showLine()
+  else if $('#enable_show_path')[0]
+    showPolygon()
+  else if $('#enable_show_allpath')[0]
+    console.log("hello all path")
+    showPolygons()
+
+showLine = ->
   poly = new google.maps.Polyline({
     strokeColor: '#000000',
     strokeOpacity: 1.0,
@@ -62,21 +74,31 @@ this.initialize = ->
   })
   poly.setMap(window.mymap)
 
-  # Add a listener for the click event
-  if $('#enable_path_edit')[0]
-    window.mymap.addListener('click', addLatLng)
-    lonlatarray=[]
-    for llstr in $('#user_address').val().split('/')
-      llstr=llstr.slice(1,-1)
-      ll=llstr.split(',')
-      lonlatarray.push(new google.maps.LatLng(ll[0],ll[1])) 
-    console.log(lonlatarray)
-    poly.setPath(lonlatarray)
-  else
-    console.log("hello no path")
+  lonlatarray=[]
+  for llstr in $('#user_address').val().split('/')
+    llstr=llstr.slice(1,-1)
+    ll=llstr.split(',')
+    lonlatarray.push(new google.maps.LatLng(ll[0],ll[1])) 
+  console.log(lonlatarray)
+  poly.setPath(lonlatarray)
 
-    
+showPolygon = ->
+  poly = new google.maps.Polygon({
+    strokeColor: '#000000',
+    strokeOpacity: 1.0,
+    strokeWeight: 3
+  })
+  poly.setMap(window.mymap)
 
+  lonlatarray=[]
+  for llstr in $('#a_user').data("address").split('/')
+    llstr=llstr.slice(1,-1)
+    ll=llstr.split(',')
+    lonlatarray.push(new google.maps.LatLng(ll[0],ll[1])) 
+  console.log(lonlatarray)
+  poly.setPath(lonlatarray)
+
+  
 
 
 ###
