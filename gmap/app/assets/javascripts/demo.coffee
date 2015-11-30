@@ -65,8 +65,16 @@ this.initialize = ->
   # Add a listener for the click event
   if $('#enable_path_edit')[0]
     window.mymap.addListener('click', addLatLng)
+    lonlatarray=[]
+    for llstr in $('#user_address').val().split('/')
+      llstr=llstr.slice(1,-1)
+      ll=llstr.split(',')
+      lonlatarray.push(new google.maps.LatLng(ll[0],ll[1])) 
+    console.log(lonlatarray)
+    poly.setPath(lonlatarray)
   else
     console.log("hello no path")
+
     
 
 
