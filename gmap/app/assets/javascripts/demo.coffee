@@ -2,8 +2,7 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 window.mymap= null
-marker1 = null
-marker2 = null
+poly = null
 
 console.log('hello coffe erb')
 $(document).on "page:change", ->
@@ -19,7 +18,6 @@ $(document).on "page:change", ->
                 $.getScript("/users/marker?&north=#{north}&south=#{south}&east=#{east}&west=#{west}")
                 console.log('this is in idle coffe erb')
 )
-
 
 
 # スタイル定義
@@ -56,6 +54,47 @@ this.initialize = ->
   my_style = new google.maps.StyledMapType(map_style_options)
   window.mymap.mapTypes.set('MyStyle', my_style)
   window.mymap.setMapTypeId('MyStyle')
+
+  poly = new google.maps.Polyline({
+    strokeColor: '#000000',
+    strokeOpacity: 1.0,
+    strokeWeight: 3
+  })
+  poly.setMap(window.mymap)
+
+  # Add a listener for the click event
+  if $('#enable_path_edit')[0]
+    window.mymap.addListener('click', addLatLng)
+  else
+    console.log("hello no path")
+    
+
+
+
+###
+Handles click events on a map, and adds a new point to the Polyline.
+###
+this.addLatLng =(event)->
+  path = poly.getPath();
+
+  # Because path is an MVCArray, we can simply append a new coordinate
+  # and it will automatically appear.
+  path.push(event.latLng);
+
+  # Add a new marker at the new plotted point on the polyline.
+  marker = new google.maps.Marker({
+    position: event.latLng,
+    title: '#' + path.getLength(),
+    map: window.mymap
+  })
+
+  #a=($('#user_address').val()).split(",")
+  #a.push(event.latLng)
+  # save path lonlat
+  $('#user_address').val(path.getArray().join "/")
+
+
+
 
 
 
