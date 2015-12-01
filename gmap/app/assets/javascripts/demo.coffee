@@ -4,23 +4,7 @@
 window.mymap= null
 poly = null
 
-console.log('hello coffe erb')
-$(document).on "page:change", ->
-        initialize()
-        google.maps.event.addListener(window.mymap, 'idle', ->
-                # 表示範囲を取得
-                pos = window.mymap.getBounds()
-                north = pos.getNorthEast().lat()
-                south = pos.getSouthWest().lat()
-                east    = pos.getNorthEast().lng()
-                west = pos.getSouthWest().lng()
-                # コントローラーに値をGETパラメータで渡す
-                $.getScript("/users/marker?&north=#{north}&south=#{south}&east=#{east}&west=#{west}")
-                console.log('this is in idle coffe erb')
-)
-
-
-# スタイル定義
+#GoogleMapスタイル定義
 map_style_options = [
     {
         featureType: 'all',
@@ -38,6 +22,23 @@ map_style_options = [
         stylers: [{ lightness: "10" }]
     }
 ]
+
+
+$(document).on "page:change", ->
+        initialize()
+        google.maps.event.addListener(window.mymap, 'idle', ->
+                # 表示範囲を取得
+                pos = window.mymap.getBounds()
+                north = pos.getNorthEast().lat()
+                south = pos.getSouthWest().lat()
+                east    = pos.getNorthEast().lng()
+                west = pos.getSouthWest().lng()
+                # コントローラーに値をGETパラメータで渡す TODO: 表示範囲に変えて何か表示を変更したい場合
+                #$.getScript("/users/marker?&north=#{north}&south=#{south}&east=#{east}&west=#{west}")
+                console.log('window.mymap is in idle state')
+)
+
+
 
 
 this.initialize = ->
@@ -62,7 +63,7 @@ this.initialize = ->
     showLine()
   else if $('#enable_show_path')[0]
     showPolygon()
-  else if $('#enable_show_allpath')[0]
+  else if $('#enable_show_allpaths')[0]
     console.log("hello all path")
     showPolygons()
 
@@ -89,8 +90,8 @@ showPolygon = ->
     strokeWeight: 3
   })
   poly.setMap(window.mymap)
-
   lonlatarray=[]
+  # erb で埋め込まれた値を取得する
   for llstr in $('#a_user').data("address").split('/')
     llstr=llstr.slice(1,-1)
     ll=llstr.split(',')
@@ -98,6 +99,9 @@ showPolygon = ->
   console.log(lonlatarray)
   poly.setPath(lonlatarray)
 
+showPolygons = ->
+  # Ajax でサーバーから取得する
+  $.getScript("/users/area")
   
 
 
@@ -111,12 +115,6 @@ this.addLatLng =(event)->
   # and it will automatically appear.
   path.push(event.latLng);
 
-  # Add a new marker at the new plotted point on the polyline.
-  marker = new google.maps.Marker({
-    position: event.latLng,
-    title: '#' + path.getLength(),
-    map: window.mymap
-  })
 
   #a=($('#user_address').val()).split(",")
   #a.push(event.latLng)
@@ -127,43 +125,3 @@ this.addLatLng =(event)->
 
 
 
-
-if $('#map_canvas').length
-    # 鳥取駅をデフォルトの位置とする
-    default_point = new google.maps.LatLng(35.494317, 134.225368)
-
-    # マップ作成
-    # map_canvasというIDがついているdivを指定
-    window.big_map = new google.maps.Map(
-        document.getElementById('map_canvas'),
-        {
-        center: default_point, #設定しないとSafariで表示されなかった
-        zoom: 16,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        scaleControl: true
-        }
-    )
-
-    # ユーザーの現在位置取得を試みる
-    if navigator.geolocation
-        # 鳥取県の範囲を指定
-        tottori_area_coords = [
-            new google.maps.LatLng(35.57985414012871, 133.12805255937496),
-            new google.maps.LatLng(35.65130415054386, 134.52331623124996),
-            new google.maps.LatLng(35.16778016004279, 134.56726154374996),
-            new google.maps.LatLng(34.99696260051415, 133.05114826249996)
-        ]
-        tottori_area = new google.maps.Polygon({ paths: tottori_area_coords })
-
-        # ユーザーの現在位置が鳥取県の範囲内だったら、
-        # 現在位置を中心とした地図にする
-        navigator.geolocation.getCurrentPosition (position) ->
-            current_location = new google.maps.LatLng(position.coords.latitude, position.coords.longitude)
-            if google.maps.geometry.poly.containsLocation(current_location, tottori_area)
-                big_map.setCenter(current_location)
-            # 鳥取県意外から見られている場合は、鳥取駅を表示する
-            else
-                big_map.setCenter(default_point)
-    # geolocationが有効でなければ、鳥取駅を表示する
-    else
-        big_map.setCenter(default_point)

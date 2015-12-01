@@ -2,6 +2,7 @@ Rails.application.routes.draw do
 
   get 'demo/index'
   get 'users/marker', to:'users#marker', as: :marker
+  get 'users/area', to:'users#area', as: :area
   resources :users
 
 

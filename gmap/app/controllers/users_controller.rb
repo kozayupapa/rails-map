@@ -16,6 +16,15 @@ class UsersController < ApplicationController
   end
 
 
+  # GET /area
+  def area
+
+    # とりあえず全user返す
+    @users = User.all
+
+  end
+
+
   # GET /users
   # GET /users.json
   def index
