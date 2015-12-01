@@ -1,0 +1,36 @@
+console.log('area ajax response start');
+var marker;
+
+<% @users.each do |user| %>
+var area_<%= user.id %> = new google.maps.Polygon({
+    strokeColor: '#220000',
+    strokeOpacity: 1.0,
+    strokeWeight: 3
+});
+
+// Add a new marker at the new plotted point on the polyline.
+var pos = new google.maps.LatLng(<%= user.latitude %>, <%= user.longitude %>);
+marker = new google.maps.Marker({
+    position:pos,
+    label:"<%= user.title %>",
+    map: window.mymap
+});
+
+
+lonlatarray=[];
+ars ="<%= user.address %>";
+console.log(ars);
+ar = ars.split('/');
+var i;
+for (i=0;i<ar.length;i++) {
+    llstr=ar[i];
+    llstr=llstr.slice(1,-1);
+    ll=llstr.split(',');
+    lonlatarray.push(new google.maps.LatLng(ll[0],ll[1])) 
+}
+console.log(lonlatarray);
+area_<%= user.id %>.setPath(lonlatarray);
+area_<%= user.id %>.setMap(window.mymap);
+
+
+<% end %>
