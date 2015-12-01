@@ -115,11 +115,12 @@ this.addLatLng =(event)->
   # and it will automatically appear.
   path.push(event.latLng);
 
-
-  #a=($('#user_address').val()).split(",")
-  #a.push(event.latLng)
-  # save path lonlat
+  # アドレスとしてline のPathを保存する
   $('#user_address').val(path.getArray().join "/")
+
+  # 最後のlon lat をuserの場所として保存する (TODO:平均をとりたい)
+  $('#user_latitude').val(event.latLng.lat())
+  $('#user_longitude').val(event.latLng.lng())
 
 
 
