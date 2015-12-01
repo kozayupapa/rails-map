@@ -57,14 +57,17 @@ this.initialize = ->
   window.mymap.setMapTypeId('MyStyle')
 
 
-  # Add a listener for the click event
+  # htmlに enable flag としての div id を設定することでedit時だけ有効にする
   if $('#enable_edit_path')[0]
     window.mymap.addListener('click', addLatLng)
     showLine()
-  else if $('#enable_show_path')[0]
+
+  # show flag がdivで設定されている時に表示する
+  if $('#enable_show_path')[0]
     showPolygon()
-  else if $('#enable_show_allpaths')[0]
-    console.log("hello all path")
+
+  # show allpath flag がdivで設定されている時に表示する
+  if $('#enable_show_allpaths')[0]
     showPolygons()
 
 showLine = ->
@@ -76,8 +79,11 @@ showLine = ->
   poly.setMap(window.mymap)
 
   lonlatarray=[]
+  #LonLatが/で連結されて保存されている前提で一地点ごとに分解する
   for llstr in $('#user_address').val().split('/')
+    #(long,lat) とはいっているので、先頭と最後の()を削除
     llstr=llstr.slice(1,-1)
+    #long,lat　に分解して追加
     ll=llstr.split(',')
     lonlatarray.push(new google.maps.LatLng(ll[0],ll[1])) 
   console.log(lonlatarray)
@@ -91,7 +97,8 @@ showPolygon = ->
   })
   poly.setMap(window.mymap)
   lonlatarray=[]
-  # erb で埋め込まれた値を取得する
+  # erb で埋め込まれていることを前提として値を取得する
+  # TODO: 上記のshowline のロジックと同等なので要リファクタ
   for llstr in $('#a_user').data("address").split('/')
     llstr=llstr.slice(1,-1)
     ll=llstr.split(',')
@@ -115,10 +122,10 @@ this.addLatLng =(event)->
   # and it will automatically appear.
   path.push(event.latLng);
 
-  # アドレスとしてline のPathを保存する
+  # モデルを作り変えるのが面倒だったのでアドレス(String)としてline のPathを保存する
   $('#user_address').val(path.getArray().join "/")
 
-  # 最後のlon lat をuserの場所として保存する (TODO:平均をとりたい)
+  # 最後のlon lat をuserの緯度経度として保存する (TODO:線で表示された内側に表示されるよう平均をとりたい)
   $('#user_latitude').val(event.latLng.lat())
   $('#user_longitude').val(event.latLng.lng())
 

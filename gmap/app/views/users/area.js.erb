@@ -1,22 +1,18 @@
 console.log('area ajax response start');
 var marker;
-
+//全ユーザー分の情報に展開されてclientに送信される
 <% @users.each do |user| %>
+
+//1 userのareaをポリゴンで描画する
 var area_<%= user.id %> = new google.maps.Polygon({
     strokeColor: '#220000',
     strokeOpacity: 1.0,
     strokeWeight: 3
 });
 
-// Add a new marker at the new plotted point on the polyline.
-var pos = new google.maps.LatLng(<%= user.latitude %>, <%= user.longitude %>);
-marker = new google.maps.Marker({
-    position:pos,
-    label:"<%= user.title %>",
-    map: window.mymap
-});
 
-
+// LonLatが/で連結されて保存されている前提で一地点ごとに分解する
+//# TODO: coffee のロジックと同等なので要リファクタ
 lonlatarray=[];
 ars ="<%= user.address %>";
 console.log(ars);
@@ -31,6 +27,15 @@ for (i=0;i<ar.length;i++) {
 console.log(lonlatarray);
 area_<%= user.id %>.setPath(lonlatarray);
 area_<%= user.id %>.setMap(window.mymap);
+
+//1 userの代表緯度経度にmarker を表示して頭文字を表示
+var pos = new google.maps.LatLng(<%= user.latitude %>, <%= user.longitude %>);
+marker = new google.maps.Marker({
+    position:pos,
+    label:"<%= user.title %>",
+    map: window.mymap
+});
+
 
 
 <% end %>
